@@ -1,2 +1,2 @@
-from enumchoicefield.admin import EnumListFilter
-from rest_framework import serializers
+# from enumchoicefield.admin import EnumListFilter
+# from rest_framework import serializers

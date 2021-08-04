@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from restapi.views import index,process_interval,process_range,process_segments,combineVideo,reset_db
+from restapi.views import index,process_interval,process_range,process_segments,combine_video,reset_db
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +23,6 @@ urlpatterns = [
     path(r'api/process-interval', process_interval),
     path(r'api/process-range', process_range),
     path(r'api/process-segments', process_segments),
-    path(r'api/combine-video', combineVideo),
+    path(r'api/combine-video', combine_video),
     path(r'api/reset-db/', reset_db),
 ]

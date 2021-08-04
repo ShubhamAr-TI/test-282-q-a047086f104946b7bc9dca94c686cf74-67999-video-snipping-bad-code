@@ -90,7 +90,7 @@ class VideoService(object):
             s3_name = VideoService.get_s3_name(new_name)
             upload_to_aws(fname, "cj-video-test", s3_name)
             result.append({"video_url": VideoService.base_url.format(new_name)})
-            
+
         return {"interval_videos": result}
 
     @staticmethod
@@ -151,5 +151,4 @@ class VideoService(object):
         s3_name = VideoService.get_s3_name(name)
         upload_to_aws("/tmp/" + name, "cj-video-test", s3_name)
         result = {"video_url": VideoService.base_url.format(s3_name)}
-
         return result

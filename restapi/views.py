@@ -88,7 +88,7 @@ def process_segments(request):
         result = VideoService.process_segments(vl,nos)
         if result is None:
             raise ValueError("No of Segments is greater than video length ")
-    except Exception as ex:
+    except RuntimeError as ex:
         logging.error("Error : %s", ex)
         return Response({"reason": "Could not process" + str(ex)}, 
             status=status.HTTP_422_UNPROCESSABLE_ENTITY)
@@ -97,7 +97,7 @@ def process_segments(request):
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
-def combineVideo(request):
+def combine_video(request):
     """
     Store the Result for User Url
     """
@@ -110,7 +110,7 @@ def combineVideo(request):
             status=status.HTTP_400_BAD_REQUEST)
         result = VideoService.combine_video(request.data.get('segments', None),
           request.data.get('width', None), request.data.get('height', None))
-    except Exception as ex:
+    except RuntimeException as ex:
         logging.error("Error : %s", ex)
         return Response({"reason": "Could not process" + str(ex)}, 
         status=status.HTTP_422_UNPROCESSABLE_ENTITY)
@@ -141,6 +141,6 @@ def clear_dir(folder):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
                 rmtree(file_path)
-        except Exception as e:
-            logging.error("Error : %s", ex)
+        except RuntimeError as e:
+            logging.error("Error : %s", e)
             raise e
