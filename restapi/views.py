@@ -82,7 +82,6 @@ def process_segments(request):
     """
 
     try:
-        
         request_params = ['video_link', 'video_link', 'no_of_segments']
         if check_request_params(request, request_params):
             resp = {"reason": "invalid parameters"}
