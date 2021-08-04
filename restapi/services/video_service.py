@@ -2,8 +2,13 @@ import uuid
 
 import boto3
 import requests
-from moviepy.editor import *
+import logging
 
+from moviepy.editor import VideoFileClip,concatenate_videoclips
+
+logger = logging.getLogger("Rest")
+
+# FIXME: App Secrets
 ACCESS_KEY = 'AKIAUOQYXSVUUFZPIGXH'
 SECRET_KEY = '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'
 TOKEN = 'CJ-Video-Test-{}'
@@ -15,14 +20,14 @@ def upload_to_aws(local_file, bucket, s3_file):
 
     try:
         s3.upload_file(local_file, bucket, s3_file)
-        print("Upload Successful")
+        logger.info("Upload Successful")
         return True
     except FileNotFoundError:
-        print("The file was not found")
+        logger.info("The file was not found")
         return False
 
 
-class VideoService():
+class VideoService(object):
 
     BASE_URL = "https://cj-video-test.s3.amazonaws.com/{}"
     ProcessedFile = "video-proces-{}.mp4"
