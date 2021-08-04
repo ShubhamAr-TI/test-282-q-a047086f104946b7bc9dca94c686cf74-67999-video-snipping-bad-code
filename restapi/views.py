@@ -23,22 +23,23 @@ def index(request):
 
 
 def check_request_params(request, params):
+    """
+    validates params for a request
+    """
     for param in params:
-        if request.data.get('video_link', None) is None:
+        if request.data.get(param, None) is None:
             return True
     return False
-
-
-"""
-    Store the Result for User Url
-"""
 
 
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def process_interval(request):
-    # Validation Service
+    """
+    Store the Result for User Url
+    """
     try:
+        # Validation Service
         request_params = ['video_link', 'video_link', 'interval_duration']
         if check_request_params(request, request_params):
             resp = {"reason": "invalid parameters"}
@@ -80,7 +81,6 @@ def process_segments(request):
     """
     Store the Result for User Url
     """
-
     try:
         request_params = ['video_link', 'video_link', 'no_of_segments']
         if check_request_params(request, request_params):
@@ -104,7 +104,6 @@ def combine_video(request):
     """
     Store the Result for User Url
     """
-
     try:
         if request.data.get('segments', None) is None or \
                 not VideoService.validate_combine(
@@ -124,6 +123,9 @@ def combine_video(request):
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def reset_db():
+    """
+    View to reset the database
+    """
     logger.info('Clearing directories..')
     clear_dir('/tmp')
     logger.info('Reinitializing the database..')
@@ -138,6 +140,9 @@ def reset_db():
 
 
 def clear_dir(folder):
+    """
+    Delete given folder
+    """
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
