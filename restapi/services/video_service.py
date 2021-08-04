@@ -3,8 +3,7 @@ import uuid
 import boto3
 import requests
 import logging
-
-from moviepy.editor import VideoFileClip,concatenate_videoclips
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 
 logger = logging.getLogger("Rest")
 
@@ -90,7 +89,8 @@ class VideoService(object):
             fname = "/tmp/" + new_name
             s3_name = VideoService.get_s3_name(new_name)
             upload_to_aws(fname, "cj-video-test", s3_name)
-            result.append({"video_url": VideoService.base_url.format(new_name)})
+            video_url = VideoService.base_url.format(new_name)
+            result.append({"video_url": video_url})
 
         return {"interval_videos": result}
 
@@ -104,9 +104,8 @@ class VideoService(object):
         for part in ranges:
             clip = VideoFileClip('/tmp/' + name)
             new_name = VideoService.processed_file.format(i)
-            start,end = part.get("start"), part.get("end")
-            clip.subclip(start,end).write_videofile("/tmp/"+new_name)
-
+            start, end = part.get("start"), part.get("end")
+            clip.subclip(start, end).write_videofile("/tmp/"+new_name)
             s3_name = VideoService.get_s3_name(new_name)
             upload_to_aws("/tmp/" + new_name, "cj-video-test", s3_name)
             result.append({"video_url": VideoService.base_url.format(s3_name)})
