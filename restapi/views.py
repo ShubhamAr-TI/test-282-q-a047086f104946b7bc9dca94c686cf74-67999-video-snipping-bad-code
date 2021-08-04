@@ -15,19 +15,20 @@ from restapi.services.video_service import VideoService
 
 logger = logging.getLogger("Rest")
 
-
-def index():
+"""
+    Index view for the video API
+"""
+def index(request):
     return HttpResponse("Hello, world. You're at Video API.")
 
 
+"""
+    Store the Result for User Url
+"""
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def process_interval(request):
-    """
-    Store the Result for User Url
-    """
     # Validation Service
-
     try:
         if request.data.get('video_link', None) is None or not VideoService.validate_video_no_of_segments(request.data.get('video_link', None),
                                                           request.data.get('interval_duration', None)):
@@ -99,16 +100,16 @@ def combineVideo(request):
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def reset_db():
-    print('Clearing directories..')
+    logger.info('Clearing directories..')
     clear_dir('/tmp')
-    print('Reinitializing the database..')
+    logger.info('Reinitializing the database..')
     DB_FILE = os.path.join(BASE_DIR, 'db.sqlite3')
     DB_RESTORE_FILE = os.path.join(BASE_DIR, 'db.sqlite3.restore')
     if os.path.exists(DB_FILE) and os.path.exists(DB_RESTORE_FILE):
         os.remove(DB_FILE)
         copyfile(DB_RESTORE_FILE, DB_FILE)
     else:
-        print('No reinitialization required!')
+        logger.info('No reinitialization required!')
     return Response({"status": "Success"}, status=status.HTTP_202_ACCEPTED)
 
 
@@ -121,4 +122,5 @@ def clear_dir(folder):
             elif os.path.isdir(file_path):
                 rmtree(file_path)
         except Exception as e:
-            raise
+            logging.error("Error : %s", ex)
+            raise e
