@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from restapi.views import index,process_interval,process_range,process_segments,combine_video,reset_db
+from restapi.views import index,process_interval,process_range
+from restapi.views import process_segments,combine_video,reset_db
 
 urlpatterns = [
     path('admin/', admin.site.urls),
