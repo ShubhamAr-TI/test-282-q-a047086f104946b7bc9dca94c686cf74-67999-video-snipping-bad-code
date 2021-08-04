@@ -3,7 +3,6 @@ import uuid
 import boto3
 import requests
 import logging
-
 from moviepy.editor import VideoFileClip,concatenate_videoclips
 
 logger = logging.getLogger("Rest")
@@ -29,7 +28,7 @@ def upload_to_aws(local_file, bucket, s3_file):
 
 class VideoService(object):
 
-    BASE_URL = "https://cj-video-test.s3.amazonaws.com/{}"
+    base_url = "https://cj-video-test.s3.amazonaws.com/{}"
     processed_file = "video-proces-{}.mp4"
 
     @staticmethod
@@ -87,9 +86,11 @@ class VideoService(object):
             start = i*interval_time
             end = min((i+1)*interval_time, clip.duration)
             clip.subclip(start, end).write_videofile("/tmp/"+new_name)
-            upload_to_aws("/tmp/" + new_name, "cj-video-test", VideoService.get_s3_name(new_name))
-            result.append({"video_url": VideoService.BASE_URL.format(new_name)})
-
+            fname = "/tmp/" + new_name
+            s3_name = VideoService.get_s3_name(new_name)
+            upload_to_aws(fname, "cj-video-test", s3_name)
+            result.append({"video_url": VideoService.base_url.format(new_name)})
+            
         return {"interval_videos": result}
 
     @staticmethod
@@ -102,10 +103,11 @@ class VideoService(object):
         for part in ranges:
             clip = VideoFileClip('/tmp/' + name)
             new_name = VideoService.processed_file.format(i)
-            clip.subclip(part.get("start"), part.get("end")).write_videofile("/tmp/"+new_name)
+            start,end = part.get("start"), part.get("end")
+            clip.subclip(start,end).write_videofile("/tmp/"+new_name)
             s3_name = VideoService.get_s3_name(new_name)
             upload_to_aws("/tmp/" + new_name, "cj-video-test", s3_name)
-            result.append({"video_url": VideoService.BASE_URL.format(s3_name)})
+            result.append({"video_url": VideoService.base_url.format(s3_name)})
             i += 1
 
         return {"interval_videos": result}
@@ -128,7 +130,7 @@ class VideoService(object):
             clip.subclip(start, end).write_videofile("/tmp/" + new_name)
             s3_name = VideoService.get_s3_name(new_name)
             upload_to_aws("/tmp/" + new_name, "cj-video-test", s3_name)
-            result.append({"video_url": VideoService.BASE_URL.format(s3_name)})
+            result.append({"video_url": VideoService.base_url.format(s3_name)})
 
         return {"interval_videos": result}
 
@@ -148,6 +150,6 @@ class VideoService(object):
         final_clip.resize((height, width)).write_videofile("/tmp/" + name)
         s3_name = VideoService.get_s3_name(name)
         upload_to_aws("/tmp/" + name, "cj-video-test", s3_name)
-        result = {"video_url": VideoService.BASE_URL.format(s3_name)}
+        result = {"video_url": VideoService.base_url.format(s3_name)}
 
         return result
