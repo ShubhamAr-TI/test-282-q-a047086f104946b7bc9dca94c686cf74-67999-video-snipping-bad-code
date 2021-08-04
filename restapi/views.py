@@ -27,12 +27,12 @@ def check_request_params(request,params):
             return True
     return False
 
+"""
+    Store the Result for User Url
+"""
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def process_interval(request):
-    """
-    Store the Result for User Url
-    """
     # Validation Service
     try:
         request_params = ['video_link','video_link','interval_duration']
