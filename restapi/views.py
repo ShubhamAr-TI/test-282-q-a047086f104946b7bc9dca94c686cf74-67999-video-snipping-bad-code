@@ -21,31 +21,35 @@ def index(request):
     """
     return HttpResponse("Hello, world. You're at Video API.")
 
-def check_request_params(request,params):
+
+def check_request_params(request, params):
     for param in params:
         if request.data.get('video_link', None) is None:
             return True
     return False
 
+
 """
     Store the Result for User Url
 """
+
+
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def process_interval(request):
     # Validation Service
     try:
-        request_params = ['video_link','video_link','interval_duration']
-        if check_request_params(request,request_params):
-            return Response({"reason": "invalid parameters"},
-                             status=status.HTTP_400_BAD_REQUEST)
+        request_params = ['video_link', 'video_link', 'interval_duration']
+        if check_request_params(request, request_params):
+            resp = {"reason": "invalid parameters"}
+            return Response(resp, status=status.HTTP_400_BAD_REQUEST)
         video_link = request.data.get('video_link', None)
         interval_duration = request.data.get('interval_duration', None)
-        result = VideoService.process_interval(video_link,interval_duration)
+        result = VideoService.process_interval(video_link, interval_duration)
     except RuntimeError as ex:
         logging.error("Error : %s", ex)
-        return Response({"reason": "Could not process" + str(ex)}, 
-        status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        resp = {"reason": "Could not process" + str(ex)}
+        return Response(resp, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     return Response(result)
 
 
@@ -56,17 +60,17 @@ def process_range(request):
     Store the Result for User Url
     """
     try:
-        request_params = ['video_link','video_link','interval_range']
-        if check_request_params(request,request_params):
-            return Response({"reason": "invalid parameters"}, 
-            status=status.HTTP_400_BAD_REQUEST)
+        request_params = ['video_link', 'video_link', 'interval_range']
+        if check_request_params(request, request_params):
+            resp = {"reason": "invalid parameters"}
+            return Response(resp, status=status.HTTP_400_BAD_REQUEST)
         video_link = request.data.get('video_link', None)
         interval_range = request.data.get('interval_range', None)
-        result = VideoService.process_ranges(video_link,interval_range)
+        result = VideoService.process_ranges(video_link, interval_range)
     except RuntimeError as ex:
         logging.error("Error : %s", ex)
-        return Response({"reason": "Could not process" + str(ex)}, 
-        status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        err_resp = {"reason": "Could not process" + str(ex)}
+        return Response(err_resp, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     return Response(result)
 
 
@@ -79,19 +83,19 @@ def process_segments(request):
 
     try:
         
-        request_params = ['video_link','video_link','no_of_segments']
-        if check_request_params(request,request_params):
-            return Response({"reason": "invalid parameters"}, 
-            status=status.HTTP_400_BAD_REQUEST)
+        request_params = ['video_link', 'video_link', 'no_of_segments']
+        if check_request_params(request, request_params):
+            resp = {"reason": "invalid parameters"}
+            return Response(resp, status=status.HTTP_400_BAD_REQUEST)
         vl = request.data.get('video_link', None)
         nos = request.data.get('no_of_segments', None)
-        result = VideoService.process_segments(vl,nos)
+        result = VideoService.process_segments(vl, nos)
         if result is None:
             raise ValueError("No of Segments is greater than video length ")
     except RuntimeError as ex:
         logging.error("Error : %s", ex)
-        return Response({"reason": "Could not process" + str(ex)}, 
-            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        resp = {"reason": "Could not process" + str(ex)}
+        return Response(resp, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     return Response(result)
 
 
@@ -104,16 +108,17 @@ def combine_video(request):
 
     try:
         if request.data.get('segments', None) is None or \
-                not VideoService.validate_combine( \
+                not VideoService.validate_combine(
                     request.data.get('segments', None)):
-            return Response({"reason": "invalid parameters"}, 
-            status=status.HTTP_400_BAD_REQUEST)
+            return Response({"reason": "invalid parameters"},
+                            status=status.HTTP_400_BAD_REQUEST)
         result = VideoService.combine_video(request.data.get('segments', None),
-          request.data.get('width', None), request.data.get('height', None))
+                                            request.data.get('width', None),
+                                            request.data.get('height', None))
     except RuntimeError as ex:
         logging.error("Error : %s", ex)
-        return Response({"reason": "Could not process" + str(ex)}, 
-        status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        return Response({"reason": "Could not process" + str(ex)},
+                        status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     return Response(result)
 
 

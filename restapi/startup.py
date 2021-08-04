@@ -7,6 +7,7 @@ from leadsapi.settings import BASE_DIR
 
 logger = logging.getLogger("Startup")
 
+
 def startup():
     logger.info('Performing database restore..')
     DB_FILE = os.path.join(BASE_DIR, 'db.sqlite3')
