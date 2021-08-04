@@ -110,7 +110,7 @@ def combine_video(request):
             status=status.HTTP_400_BAD_REQUEST)
         result = VideoService.combine_video(request.data.get('segments', None),
           request.data.get('width', None), request.data.get('height', None))
-    except RuntimeException as ex:
+    except RuntimeError as ex:
         logging.error("Error : %s", ex)
         return Response({"reason": "Could not process" + str(ex)}, 
         status=status.HTTP_422_UNPROCESSABLE_ENTITY)
